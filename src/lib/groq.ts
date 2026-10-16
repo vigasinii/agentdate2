@@ -1,7 +1,11 @@
 import Groq from "groq-sdk";
 import type { LinkedInProfile, InstagramProfile } from "./apify";
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+let _groq: Groq | null = null;
+function getGroq() {
+  if (!_groq) _groq = new Groq({ apiKey: process.env.GROQ_API_KEY ?? "" });
+  return _groq;
+}
 
 export interface PersonProfile {
   id: string;
@@ -31,7 +35,7 @@ export interface DateConversation {
 }
 
 async function chat(systemPrompt: string, userPrompt: string): Promise<string> {
-  const res = await groq.chat.completions.create({
+  const res = await getGroq().chat.completions.create({
     model: process.env.GROQ_MODEL ?? "openai/gpt-oss-20b",
     messages: [
       { role: "system", content: systemPrompt },
