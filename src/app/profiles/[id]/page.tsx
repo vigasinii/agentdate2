@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 import { getPeople, getDates } from "@/lib/store";
 import Link from "next/link";
-import { ExternalLink, AlertTriangle, Info } from "lucide-react";
+import { ExternalLink, AlertTriangle, Info, ArrowLeft } from "lucide-react";
 
 export default async function ProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -10,8 +10,10 @@ export default async function ProfilePage({ params }: { params: Promise<{ id: st
 
   if (!person) {
     return (
-      <div className="max-w-3xl mx-auto px-6 py-10">
-        <Link href="/profiles" className="text-[13px] hover:underline mb-6 block" style={{ color: "var(--muted)" }}>Back to People</Link>
+      <div style={{ maxWidth: 600, margin: "0 auto", padding: "40px 32px" }}>
+        <Link href="/profiles" style={{ fontSize: 13, color: "var(--muted)", display: "flex", alignItems: "center", gap: 6, marginBottom: 24 }}>
+          <ArrowLeft size={13} /> Back to People
+        </Link>
         <p style={{ color: "var(--muted)" }}>Person not found.</p>
       </div>
     );
@@ -24,93 +26,126 @@ export default async function ProfilePage({ params }: { params: Promise<{ id: st
     inferredFields?: string[];
     evidence?: Record<string, string>;
     dataQuality?: { linkedinAvailable: boolean; instagramAvailable: boolean; confidence: string; warnings?: string[] };
+    dealbreakers?: string[];
   };
   const analysis = person.analysis as Analysis;
-
   const scoreColor = (s: number) => s >= 70 ? "var(--success)" : s >= 40 ? "var(--warning)" : "var(--destructive)";
 
-  function TagList({ items, label }: { items: string[]; label: string }) {
+  const avatarColors: [string, string][] = [
+    ["#E8F0EC","#456B59"],["#EBE8F0","#5B4592"],["#F0E8E8","#924545"],["#E8EDF0","#456789"],["#F0EDE8","#896745"],
+  ];
+  const [avatarBg, avatarFg] = avatarColors[person.name.charCodeAt(0) % avatarColors.length];
+
+  function TagGroup({ label, items }: { label: string; items?: string[] }) {
+    if (!items || items.length === 0) return null;
     return (
-      <div className="mb-4">
-        <p className="text-[12px] font-semibold uppercase tracking-wide mb-2" style={{ color: "var(--muted)" }}>{label}</p>
-        {items.length === 0
-          ? <p className="text-[13px]" style={{ color: "var(--muted)" }}>Unknown — insufficient public data</p>
-          : <div className="flex flex-wrap gap-1.5">
-              {items.map(t => (
-                <span key={t} className="text-[12px] px-2 py-0.5 rounded-md border" style={{ borderColor: "var(--border)", color: "var(--muted)", background: "var(--surface)" }}>{t}</span>
-              ))}
-            </div>
-        }
+      <div style={{ marginBottom: 20 }}>
+        <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted)", marginBottom: 8 }}>
+          {label}
+        </p>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+          {items.map(t => (
+            <span key={t} style={{ fontSize: 12, padding: "3px 10px", borderRadius: 20, border: "1px solid var(--border)", color: "var(--muted)", background: "var(--surface)" }}>
+              {t}
+            </span>
+          ))}
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-10">
-      <Link href="/profiles" className="text-[13px] hover:underline mb-6 block" style={{ color: "var(--muted)" }}>Back to People</Link>
+    <div style={{ maxWidth: 1000, margin: "0 auto", padding: "32px 32px 80px" }}>
+      {/* Back nav */}
+      <Link href="/profiles"
+        style={{ fontSize: 12, color: "var(--muted)", display: "inline-flex", alignItems: "center", gap: 6, marginBottom: 28, transition: "color 0.12s" }}
+        className="hover:text-[var(--text)]"
+      >
+        <ArrowLeft size={13} /> All people
+      </Link>
 
-      {/* Data quality warnings */}
+      {/* Warnings */}
       {analysis.dataQuality?.warnings?.map((w, i) => (
-        <div key={i} className="flex gap-2 p-3 rounded-lg border mb-4 text-[13px]"
-          style={{ borderColor: "#fde68a", background: "#fffbeb", color: "var(--warning)" }}>
-          <AlertTriangle size={14} className="shrink-0 mt-0.5" />
+        <div key={i} style={{ display: "flex", gap: 10, padding: "10px 14px", borderRadius: 10, border: "1px solid #fde68a", background: "#fffbeb", color: "var(--warning)", fontSize: 13, marginBottom: 12 }}>
+          <AlertTriangle size={14} style={{ flexShrink: 0, marginTop: 1 }} />
           {w}
         </div>
       ))}
 
-      <div className="grid md:grid-cols-[280px_1fr] gap-6">
-        {/* Left column */}
-        <div className="space-y-4">
-          <div className="rounded-xl border p-5" style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-            {person.profilePicture ? (
-              <img src={person.profilePicture} alt={person.name} className="w-20 h-20 rounded-full object-cover mb-4" />
-            ) : (
-              <div className="w-20 h-20 rounded-full flex items-center justify-center text-2xl font-medium mb-4"
-                style={{ background: "var(--surface2)", color: "var(--muted)" }}>{person.name[0]}</div>
-            )}
-            <h1 className="text-[20px] font-semibold mb-0.5" style={{ color: "var(--text)" }}>{person.name}</h1>
-            {person.rawLinkedIn?.headline && (
-              <p className="text-[13px] mb-3" style={{ color: "var(--muted)" }}>{person.rawLinkedIn.headline}</p>
-            )}
-            {person.rawLinkedIn?.location && (
-              <p className="text-[12px] mb-3" style={{ color: "var(--muted)" }}>{person.rawLinkedIn.location}</p>
-            )}
-            <div className="space-y-2">
-              <a href={person.linkedinUrl} target="_blank" rel="noreferrer"
-                className="flex items-center gap-2 text-[12px] hover:underline"
-                style={{ color: "var(--accent)" }}>
-                <ExternalLink size={12} /> LinkedIn profile
-              </a>
-              <a href={person.instagramUrl} target="_blank" rel="noreferrer"
-                className="flex items-center gap-2 text-[12px] hover:underline"
-                style={{ color: "var(--accent)" }}>
-                <ExternalLink size={12} /> Instagram profile
-              </a>
+      <div style={{ display: "grid", gridTemplateColumns: "260px 1fr", gap: 24 }}>
+        {/* Left panel */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {/* Identity card */}
+          <div style={{ border: "1px solid var(--border)", borderRadius: 12, background: "var(--card)", overflow: "hidden" }}>
+            {/* Portrait */}
+            <div style={{ height: 200, background: avatarBg, overflow: "hidden", position: "relative" }}>
+              {person.profilePicture ? (
+                <img src={person.profilePicture} alt={person.name}
+                  style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
+              ) : (
+                <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <span style={{ fontSize: 72, fontWeight: 700, color: avatarFg, letterSpacing: "-0.03em" }}>
+                    {person.name[0].toUpperCase()}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Info */}
+            <div style={{ padding: "16px 18px 18px" }}>
+              <h1 style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.02em", marginBottom: 4 }}>
+                {person.name}
+              </h1>
+              {person.rawLinkedIn?.headline && (
+                <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.5, marginBottom: 8 }}>
+                  {person.rawLinkedIn.headline}
+                </p>
+              )}
+              {person.rawLinkedIn?.location && (
+                <p style={{ fontSize: 12, color: "var(--muted)", marginBottom: 12 }}>
+                  {person.rawLinkedIn.location}
+                </p>
+              )}
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                {person.linkedinUrl && (
+                  <a href={person.linkedinUrl} target="_blank" rel="noreferrer"
+                    style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "var(--accent)" }}
+                    className="hover:underline">
+                    <ExternalLink size={12} /> LinkedIn profile
+                  </a>
+                )}
+                {person.instagramUrl && (
+                  <a href={person.instagramUrl} target="_blank" rel="noreferrer"
+                    style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "var(--accent)" }}
+                    className="hover:underline">
+                    <ExternalLink size={12} /> Instagram profile
+                  </a>
+                )}
+              </div>
             </div>
           </div>
 
           {/* Data quality */}
           {analysis.dataQuality && (
-            <div className="rounded-xl border p-4 text-[12px]" style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-              <div className="flex items-center gap-1.5 mb-2 font-semibold" style={{ color: "var(--muted)" }}>
-                <Info size={12} /> Source verification
+            <div style={{ border: "1px solid var(--border)", borderRadius: 12, background: "var(--card)", padding: "14px 16px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 10, fontSize: 11, fontWeight: 600, color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                <Info size={12} /> Source confidence
               </div>
-              <div className="space-y-1.5">
-                <div className="flex justify-between">
-                  <span style={{ color: "var(--muted)" }}>LinkedIn</span>
-                  <span style={{ color: analysis.dataQuality.linkedinAvailable ? "var(--success)" : "var(--destructive)" }}>
-                    {analysis.dataQuality.linkedinAvailable ? "available" : "unavailable"}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span style={{ color: "var(--muted)" }}>Instagram</span>
-                  <span style={{ color: analysis.dataQuality.instagramAvailable ? "var(--success)" : "var(--destructive)" }}>
-                    {analysis.dataQuality.instagramAvailable ? "available" : "unavailable"}
-                  </span>
-                </div>
-                <div className="flex justify-between">
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                {[
+                  { label: "LinkedIn", ok: analysis.dataQuality.linkedinAvailable },
+                  { label: "Instagram", ok: analysis.dataQuality.instagramAvailable },
+                ].map(({ label, ok }) => (
+                  <div key={label} style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
+                    <span style={{ color: "var(--muted)" }}>{label}</span>
+                    <span style={{ color: ok ? "var(--success)" : "var(--destructive)", fontWeight: 500 }}>
+                      {ok ? "available" : "unavailable"}
+                    </span>
+                  </div>
+                ))}
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
                   <span style={{ color: "var(--muted)" }}>Confidence</span>
-                  <span style={{ color: analysis.dataQuality.confidence === "high" ? "var(--success)" : analysis.dataQuality.confidence === "medium" ? "var(--warning)" : "var(--destructive)" }}>
+                  <span style={{ fontWeight: 500, color: analysis.dataQuality.confidence === "high" ? "var(--success)" : analysis.dataQuality.confidence === "medium" ? "var(--warning)" : "var(--destructive)" }}>
                     {analysis.dataQuality.confidence}
                   </span>
                 </div>
@@ -118,23 +153,30 @@ export default async function ProfilePage({ params }: { params: Promise<{ id: st
             </div>
           )}
 
-          {/* Top Matches */}
+          {/* Top matches */}
           {topMatches.length > 0 && (
-            <div className="rounded-xl border p-4" style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-              <p className="text-[12px] font-semibold uppercase tracking-wide mb-3" style={{ color: "var(--muted)" }}>Top Matches</p>
-              <div className="space-y-2">
+            <div style={{ border: "1px solid var(--border)", borderRadius: 12, background: "var(--card)", padding: "14px 16px" }}>
+              <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted)", marginBottom: 12 }}>
+                Top Matches
+              </p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {topMatches.map((d, i) => {
                   const otherId = d.personA === id ? d.personB : d.personA;
                   const other = people.find(p => p.id === otherId);
+                  const [bg, fg] = avatarColors[(other?.name.charCodeAt(0) ?? 0) % 5];
                   return (
                     <Link key={i} href={"/profiles/" + otherId}>
-                      <div className="flex items-center gap-2 py-1 rounded hover:bg-[var(--surface)] px-1 -mx-1 transition-colors">
-                        <span className="text-[11px] w-4" style={{ color: "var(--muted)" }}>#{i + 1}</span>
-                        <div className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-medium" style={{ background: "var(--surface2)", color: "var(--muted)" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "4px 0", transition: "opacity 0.12s" }} className="hover:opacity-70">
+                        <span style={{ fontSize: 11, fontWeight: 600, width: 20, color: "var(--muted)" }}>#{i + 1}</span>
+                        <div style={{ width: 26, height: 26, borderRadius: "50%", background: bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 600, color: fg, flexShrink: 0 }}>
                           {other?.name[0] ?? "?"}
                         </div>
-                        <span className="text-[12px] flex-1 truncate font-medium" style={{ color: "var(--text)" }}>{other?.name}</span>
-                        <span className="text-[12px] font-semibold" style={{ color: scoreColor(d.compatibilityScore) }}>{d.compatibilityScore}%</span>
+                        <span style={{ fontSize: 12, fontWeight: 500, color: "var(--text)", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                          {other?.name}
+                        </span>
+                        <span style={{ fontSize: 12, fontWeight: 700, color: scoreColor(d.compatibilityScore), flexShrink: 0 }}>
+                          {d.compatibilityScore}%
+                        </span>
                       </div>
                     </Link>
                   );
@@ -145,79 +187,97 @@ export default async function ProfilePage({ params }: { params: Promise<{ id: st
         </div>
 
         {/* Right column */}
-        <div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           {/* Summary */}
-          <div className="rounded-xl border p-5 mb-4" style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-            <p className="text-[12px] font-semibold uppercase tracking-wide mb-2" style={{ color: "var(--muted)" }}>Profile Summary</p>
-            <p className="text-[14px] leading-relaxed" style={{ color: "var(--text)" }}>{person.analysis.summary}</p>
+          <div style={{ border: "1px solid var(--border)", borderRadius: 12, background: "var(--card)", padding: "20px 22px" }}>
+            <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted)", marginBottom: 10 }}>
+              Profile Summary
+            </p>
+            <p style={{ fontSize: 14, lineHeight: 1.7, color: "var(--text)" }}>{person.analysis.summary}</p>
             {analysis.evidence?.summary && (
-              <p className="text-[12px] mt-2 italic" style={{ color: "var(--muted)" }}>Source: {analysis.evidence.summary}</p>
+              <p style={{ fontSize: 12, marginTop: 10, color: "var(--muted)", fontStyle: "italic" }}>
+                Source: {analysis.evidence.summary}
+              </p>
             )}
           </div>
 
-          {/* Traits */}
-          <div className="rounded-xl border p-5 mb-4" style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-            <p className="text-[12px] font-semibold uppercase tracking-wide mb-4" style={{ color: "var(--muted)" }}>Analysis</p>
-            <TagList items={person.analysis.personality ?? []} label="Personality traits" />
-            <TagList items={person.analysis.interests ?? []} label="Interests" />
-            <TagList items={person.analysis.hobbies ?? []} label="Hobbies" />
-            {(person.analysis.needs ?? []).length > 0 && <TagList items={person.analysis.needs} label="Relationship needs" />}
+          {/* Analysis traits */}
+          <div style={{ border: "1px solid var(--border)", borderRadius: 12, background: "var(--card)", padding: "20px 22px" }}>
+            <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted)", marginBottom: 16 }}>
+              AI Analysis
+            </p>
+            <TagGroup label="Personality traits" items={person.analysis.personality} />
+            <TagGroup label="Interests" items={person.analysis.interests} />
+            <TagGroup label="Hobbies" items={person.analysis.hobbies} />
+            <TagGroup label="Relationship needs" items={person.analysis.needs} />
             {analysis.inferredFields && analysis.inferredFields.length > 0 && (
-              <p className="text-[11px] mt-2" style={{ color: "var(--muted)" }}>
+              <p style={{ fontSize: 11, color: "var(--muted)", marginTop: 4 }}>
                 Inferred (not directly stated): {analysis.inferredFields.join(", ")}
               </p>
             )}
           </div>
 
-          {/* Looking for / Dealbreakers */}
-          <div className="rounded-xl border p-5 mb-4" style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-            <p className="text-[12px] font-semibold uppercase tracking-wide mb-2" style={{ color: "var(--muted)" }}>Looking for</p>
-            <p className="text-[13px]" style={{ color: "var(--text)" }}>{person.analysis.lookingFor}</p>
-            {(person.analysis as { dealbreakers?: string[] }).dealbreakers?.length ? (
-              <>
-                <div className="border-t my-3" style={{ borderColor: "var(--border)" }} />
-                <p className="text-[12px] font-semibold uppercase tracking-wide mb-2" style={{ color: "var(--muted)" }}>Dealbreakers</p>
-                <ul className="space-y-1">
-                  {((person.analysis as { dealbreakers?: string[] }).dealbreakers ?? []).map(d => (
-                    <li key={d} className="text-[13px]" style={{ color: "var(--text)" }}>• {d}</li>
-                  ))}
-                </ul>
-              </>
-            ) : null}
-          </div>
+          {/* Looking for */}
+          {(person.analysis.lookingFor || analysis.dealbreakers?.length) && (
+            <div style={{ border: "1px solid var(--border)", borderRadius: 12, background: "var(--card)", padding: "20px 22px" }}>
+              {person.analysis.lookingFor && (
+                <>
+                  <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted)", marginBottom: 8 }}>
+                    Looking for
+                  </p>
+                  <p style={{ fontSize: 13, lineHeight: 1.6, color: "var(--text)", marginBottom: analysis.dealbreakers?.length ? 16 : 0 }}>
+                    {person.analysis.lookingFor}
+                  </p>
+                </>
+              )}
+              {analysis.dealbreakers?.length ? (
+                <>
+                  <div style={{ height: 1, background: "var(--border)", marginBottom: 16 }} />
+                  <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted)", marginBottom: 8 }}>
+                    Dealbreakers
+                  </p>
+                  <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 4 }}>
+                    {analysis.dealbreakers.map(d => (
+                      <li key={d} style={{ fontSize: 13, color: "var(--text)" }}>• {d}</li>
+                    ))}
+                  </ul>
+                </>
+              ) : null}
+            </div>
+          )}
 
           {/* Agent dates */}
           {allDates.length > 0 && (
-            <div className="rounded-xl border p-5" style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-              <p className="text-[12px] font-semibold uppercase tracking-wide mb-4" style={{ color: "var(--muted)" }}>Agent Dates · {allDates.length}</p>
-              <div className="space-y-4">
-                {allDates.map((date, i) => {
+            <div style={{ border: "1px solid var(--border)", borderRadius: 12, background: "var(--card)", padding: "20px 22px" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+                <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted)" }}>
+                  Agent Dates
+                </p>
+                <Link href="/dates" style={{ fontSize: 12, color: "var(--accent)" }}>View in Studio →</Link>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                {allDates.slice(0, 3).map((date, i) => {
                   const otherId = date.personA === id ? date.personB : date.personA;
                   const other = people.find(p => p.id === otherId);
                   return (
-                    <div key={i} className="border-t pt-4 first:border-0 first:pt-0" style={{ borderColor: "var(--border)" }}>
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-[13px] font-medium" style={{ color: "var(--text)" }}>with {other?.name ?? "Unknown"}</span>
-                        <span className="text-[13px] font-semibold" style={{ color: scoreColor(date.compatibilityScore) }}>{date.compatibilityScore}%</span>
+                    <div key={i} style={{ paddingTop: i > 0 ? 16 : 0, borderTop: i > 0 ? "1px solid var(--border)" : "none" }}>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                        <span style={{ fontSize: 13, fontWeight: 500, color: "var(--text)" }}>with {other?.name ?? "Unknown"}</span>
+                        <span style={{ fontSize: 13, fontWeight: 700, color: scoreColor(date.compatibilityScore) }}>{date.compatibilityScore}%</span>
                       </div>
-                      <div className="space-y-2">
-                        {date.messages.slice(0, 4).map((msg, j) => {
+                      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                        {date.messages.slice(0, 3).map((msg, j) => {
                           const isMe = (msg.role === "A" && date.personA === id) || (msg.role === "B" && date.personB === id);
                           return (
-                            <div key={j} className={"flex gap-2 " + (isMe ? "flex-row-reverse" : "")}>
-                              <div className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-medium flex-shrink-0"
-                                style={{ background: "var(--surface2)", color: "var(--muted)" }}>
-                                {isMe ? person.name[0] : (other?.name[0] ?? "?")}
-                              </div>
-                              <div className="max-w-[75%] px-3 py-2 rounded-xl text-[12px] leading-relaxed"
-                                style={{ background: isMe ? "var(--surface)" : "var(--surface2)", color: "var(--text)", borderRadius: "12px" }}>
+                            <div key={j} style={{ display: "flex", gap: 8, flexDirection: isMe ? "row-reverse" : "row" }}>
+                              <div style={{ padding: "6px 12px", borderRadius: 10, fontSize: 12, lineHeight: 1.5, maxWidth: "75%", background: isMe ? "var(--surface2)" : "var(--surface)", color: "var(--text)" }}>
                                 {msg.content}
                               </div>
                             </div>
                           );
                         })}
                       </div>
-                      <p className="text-[12px] italic mt-2" style={{ color: "var(--muted)" }}>{date.compatibilityReason}</p>
+                      <p style={{ fontSize: 12, color: "var(--muted)", fontStyle: "italic", marginTop: 8 }}>{date.compatibilityReason}</p>
                     </div>
                   );
                 })}

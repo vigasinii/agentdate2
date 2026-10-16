@@ -10,76 +10,122 @@ export default function RankingsPage() {
   const rankings = computeRankings(people, dates);
   const getP = (id: string) => people.find(p => p.id === id);
   const scoreColor = (s: number) => s >= 70 ? "var(--success)" : s >= 40 ? "var(--warning)" : "var(--destructive)";
-  const scoreBg = (s: number) => s >= 70 ? "#f0fdf4" : s >= 40 ? "#fffbeb" : "#fef2f2";
   const totalSynthetic = dates.filter(d => (d as { synthetic?: boolean }).synthetic).length;
   const totalLive = dates.length - totalSynthetic;
 
+  function Avatar({ name, src, size = 32 }: { name: string; src?: string; size?: number }) {
+    const colors = [["#E8F0EC","#456B59"],["#EBE8F0","#5B4592"],["#F0E8E8","#924545"],["#E8EDF0","#456789"],["#F0EDE8","#896745"]];
+    const [bg, fg] = colors[name.charCodeAt(0) % colors.length];
+    if (src) return <img src={src} alt={name} className="rounded-full object-cover flex-shrink-0" style={{ width: size, height: size }} />;
+    return (
+      <div className="rounded-full flex items-center justify-center font-semibold flex-shrink-0"
+        style={{ width: size, height: size, background: bg, color: fg, fontSize: size * 0.38 }}>
+        {name[0].toUpperCase()}
+      </div>
+    );
+  }
+
+  const rankLabel = (i: number) => i === 0 ? "1st" : i === 1 ? "2nd" : i === 2 ? "3rd" : `#${i + 1}`;
+  const rankColor = (i: number) => i === 0 ? "#B8860B" : i === 1 ? "#707070" : i === 2 ? "#8B5E3C" : "var(--muted)";
+
   return (
-    <div className="max-w-4xl mx-auto px-6 py-10">
-      <div className="mb-6">
-        <h1 className="text-[30px] font-semibold mb-1" style={{ color: "var(--text)" }}>Rankings</h1>
-        <p className="text-[14px]" style={{ color: "var(--muted)" }}>Ranked by AI compatibility score from agent date simulations</p>
+    <div style={{ maxWidth: 900, margin: "0 auto", padding: "40px 32px 80px" }}>
+      <div style={{ marginBottom: 32 }}>
+        <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--accent)", marginBottom: 8 }}>
+          Results
+        </p>
+        <h1 style={{ fontSize: 30, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.02em", lineHeight: 1.2, marginBottom: 8 }}>
+          Matchmaking Rankings
+        </h1>
+        <p style={{ fontSize: 14, color: "var(--muted)" }}>
+          Ranked by AI compatibility score from agent date simulations.
+        </p>
       </div>
 
-      <div className="flex items-start gap-2 p-3 rounded-lg border mb-6 text-[13px]" style={{ borderColor: "var(--border)", background: "var(--surface)", color: "var(--muted)" }}>
-        <Info size={14} className="shrink-0 mt-0.5" style={{ color: "var(--accent)" }} />
-        <span>Scores combine shared interests, personality fit, and value alignment — all based on limited public data and carry uncertainty.
-        {totalSynthetic > 0 && <span> <strong style={{ color: "var(--text)" }}>{totalSynthetic}</strong> demo dates · <strong style={{ color: "var(--text)" }}>{totalLive}</strong> live agent runs.</span>}</span>
+      <div style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "12px 14px", borderRadius: 10, border: "1px solid var(--border)", background: "var(--surface)", marginBottom: 28, fontSize: 13, color: "var(--muted)" }}>
+        <Info size={14} style={{ color: "var(--accent)", flexShrink: 0, marginTop: 1 }} />
+        <span style={{ lineHeight: 1.6 }}>
+          Scores combine shared interests, personality fit, and value alignment — all based on limited public data and carry uncertainty.
+          {totalSynthetic > 0 && (
+            <> &nbsp;<strong style={{ color: "var(--text)" }}>{totalSynthetic}</strong> demo dates · <strong style={{ color: "var(--text)" }}>{totalLive}</strong> live agent runs.</>
+          )}
+        </span>
       </div>
 
       {rankings.length === 0 && (
-        <div className="rounded-xl border p-12 text-center text-[14px]" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>
-          No dates yet. <Link href="/" className="underline" style={{ color: "var(--accent)" }}>Run dates from the dashboard.</Link>
+        <div style={{ border: "1px solid var(--border)", borderRadius: 12, padding: 64, textAlign: "center", fontSize: 14, color: "var(--muted)" }}>
+          No dates yet. <Link href="/" style={{ color: "var(--accent)", textDecoration: "underline" }}>Run dates from the dashboard.</Link>
         </div>
       )}
 
-      <div className="space-y-5">
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
         {rankings.map(({ personId, rankings: r, unevaluatedCount }) => {
           const person = getP(personId);
           if (!person || r.length === 0) return null;
           return (
-            <div key={personId} className="rounded-xl border overflow-hidden" style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-              <div className="flex items-center gap-3 px-5 py-4 border-b" style={{ borderColor: "var(--border)" }}>
-                {person.profilePicture
-                  ? <img src={person.profilePicture} alt={person.name} className="w-9 h-9 rounded-full object-cover" />
-                  : <div className="w-9 h-9 rounded-full flex items-center justify-center text-[13px] font-medium" style={{ background: "var(--surface2)", color: "var(--muted)" }}>{person.name[0]}</div>}
-                <div className="flex-1 min-w-0">
-                  <p className="text-[14px] font-semibold truncate" style={{ color: "var(--text)" }}>{person.name}</p>
-                  <p className="text-[12px] truncate" style={{ color: "var(--muted)" }}>{person.rawLinkedIn?.headline}</p>
+            <div key={personId} style={{ border: "1px solid var(--border)", borderRadius: 12, background: "var(--card)", overflow: "hidden" }}>
+              {/* Person header */}
+              <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 20px", borderBottom: "1px solid var(--border)" }}>
+                <Avatar name={person.name} src={person.profilePicture} size={36} />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontSize: 14, fontWeight: 600, color: "var(--text)" }}>{person.name}</p>
+                  <p style={{ fontSize: 12, color: "var(--muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {person.rawLinkedIn?.headline}
+                  </p>
                 </div>
-                <div className="text-right text-[12px]" style={{ color: "var(--muted)" }}>
+                <div style={{ textAlign: "right", fontSize: 12, color: "var(--muted)", lineHeight: 1.6 }}>
                   <p>{r.length} evaluated</p>
-                  {unevaluatedCount > 0 && <p>{unevaluatedCount} pending</p>}
+                  {unevaluatedCount > 0 && <p style={{ opacity: 0.7 }}>{unevaluatedCount} pending</p>}
                 </div>
+                <Link href={"/profiles/" + personId}
+                  style={{ fontSize: 12, padding: "6px 12px", borderRadius: 7, border: "1px solid var(--border)", color: "var(--muted)", marginLeft: 8, flexShrink: 0 }}>
+                  Profile
+                </Link>
               </div>
+
+              {/* Matches */}
               <div>
                 {r.map(({ personId: matchId, score, reason, synthetic: isSyn }, rank) => {
                   const match = getP(matchId);
                   if (!match) return null;
                   return (
-                    <div key={matchId} className="flex items-center gap-3 px-5 py-3 border-b last:border-0 hover:bg-[var(--surface)] transition-colors"
-                      style={{ borderColor: "var(--border)" }}>
-                      <span className="text-[12px] font-medium w-6 text-center" style={{ color: "var(--muted)" }}>
-                        {rank === 0 ? "1st" : rank === 1 ? "2nd" : rank === 2 ? "3rd" : "#" + (rank + 1)}
+                    <div key={matchId}
+                      style={{ display: "flex", alignItems: "center", gap: 12, padding: "11px 20px", borderBottom: rank < r.length - 1 ? "1px solid var(--border)" : "none", transition: "background 0.12s" }}
+                      className="hover:bg-[var(--surface)]"
+                    >
+                      <span style={{ fontSize: 12, fontWeight: 600, width: 28, color: rankColor(rank), flexShrink: 0 }}>
+                        {rankLabel(rank)}
                       </span>
-                      {match.profilePicture
-                        ? <img src={match.profilePicture} alt={match.name} className="w-8 h-8 rounded-full object-cover" />
-                        : <div className="w-8 h-8 rounded-full flex items-center justify-center text-[12px] font-medium" style={{ background: "var(--surface2)", color: "var(--muted)" }}>{match.name[0]}</div>}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <Link href={"/profiles/" + matchId} className="text-[13px] font-medium hover:underline" style={{ color: "var(--text)" }}>{match.name}</Link>
-                          {isSyn && <span className="text-[10px] px-1 rounded border" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>demo</span>}
+                      <Avatar name={match.name} src={match.profilePicture} size={30} />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
+                          <Link href={"/profiles/" + matchId} style={{ fontSize: 13, fontWeight: 500, color: "var(--text)" }}
+                            className="hover:underline">
+                            {match.name}
+                          </Link>
+                          {isSyn && (
+                            <span style={{ fontSize: 10, padding: "1px 6px", borderRadius: 4, border: "1px solid var(--border)", color: "var(--muted)" }}>
+                              demo
+                            </span>
+                          )}
                         </div>
-                        <p className="text-[12px] line-clamp-1" style={{ color: "var(--muted)" }}>{reason}</p>
+                        <p style={{ fontSize: 12, color: "var(--muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                          {reason}
+                        </p>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <div className="h-1.5 w-16 rounded-full overflow-hidden" style={{ background: "var(--surface2)" }}>
-                          <div className="h-full rounded-full" style={{ width: score + "%", background: scoreColor(score) }} />
+                      <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+                        <div style={{ width: 60, height: 4, borderRadius: 2, background: "var(--surface2)", overflow: "hidden" }}>
+                          <div style={{ height: "100%", width: score + "%", background: scoreColor(score), borderRadius: 2 }} />
                         </div>
-                        <span className="text-[13px] font-semibold w-9 text-right" style={{ color: scoreColor(score) }}>{score}%</span>
+                        <span style={{ fontSize: 13, fontWeight: 700, color: scoreColor(score), width: 36, textAlign: "right" }}>
+                          {score}%
+                        </span>
                       </div>
-                      <Link href="/dates" className="text-[11px] px-2 py-1 rounded border hover:border-[var(--accent)] transition-colors"
-                        style={{ borderColor: "var(--border)", color: "var(--muted)" }}>Watch</Link>
+                      <Link href="/dates"
+                        style={{ fontSize: 11, padding: "5px 10px", borderRadius: 6, border: "1px solid var(--border)", color: "var(--muted)", flexShrink: 0, marginLeft: 4 }}
+                        className="hover:border-[var(--accent)] transition-colors">
+                        Watch
+                      </Link>
                     </div>
                   );
                 })}
