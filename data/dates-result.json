@@ -1,0 +1,107 @@
+﻿{
+    "dates":  [
+
+              ],
+    "rankings":  [
+                     {
+                         "personId":  "7bb7f166-05ce-40f6-a356-0586616b1c91",
+                         "rankings":  ""
+                     },
+                     {
+                         "personId":  "c8d4e041-e319-4d31-b65b-77b93406b71d",
+                         "rankings":  ""
+                     },
+                     {
+                         "personId":  "23922ea2-6204-49c6-aecd-11b82ebdd1b7",
+                         "rankings":  ""
+                     },
+                     {
+                         "personId":  "1a92c012-c898-41ca-8325-bf94b741342d",
+                         "rankings":  ""
+                     },
+                     {
+                         "personId":  "0dd3a5a5-d0cf-489f-9c8a-72ee984afffd",
+                         "rankings":  ""
+                     },
+                     {
+                         "personId":  "2a59a128-013a-4ce7-ab44-f6de0e5d66fe",
+                         "rankings":  ""
+                     },
+                     {
+                         "personId":  "0b48d45d-d030-4fe9-bbb7-dacbc0fddf61",
+                         "rankings":  ""
+                     },
+                     {
+                         "personId":  "bef233be-769a-4aac-bb8e-058a1595de66",
+                         "rankings":  ""
+                     },
+                     {
+                         "personId":  "4da4377d-791d-421f-a711-5871d1ac4824",
+                         "rankings":  ""
+                     },
+                     {
+                         "personId":  "6093abd1-b687-480c-a6c7-9d63bbdb6bd8",
+                         "rankings":  ""
+                     },
+                     {
+                         "personId":  "e2db65b9-4d9e-48ff-9fd7-48b18b3be919",
+                         "rankings":  ""
+                     },
+                     {
+                         "personId":  "fab0f1c7-468b-4450-8eb2-ce70509be2a7",
+                         "rankings":  ""
+                     },
+                     {
+                         "personId":  "8a08b29b-f901-44f3-9e8a-8f5fe0e4f54b",
+                         "rankings":  ""
+                     },
+                     {
+                         "personId":  "38c1449f-c1ae-4789-a0bb-eea17a972e81",
+                         "rankings":  ""
+                     },
+                     {
+                         "personId":  "9a2a5adc-1798-47c9-9571-38015c56be5e",
+                         "rankings":  ""
+                     },
+                     {
+                         "personId":  "48c5df2d-99be-4a40-b950-f1388057375a",
+                         "rankings":  ""
+                     },
+                     {
+                         "personId":  "8a6dd971-464f-4823-ae62-2ed616c43e83",
+                         "rankings":  ""
+                     },
+                     {
+                         "personId":  "68572d26-5677-4410-83f6-19c32bf0cbc0",
+                         "rankings":  ""
+                     },
+                     {
+                         "personId":  "7417b097-59d7-400a-a951-eda61422fa63",
+                         "rankings":  ""
+                     },
+                     {
+                         "personId":  "472f05d7-38e4-4b67-9cba-a6b73c41c71c",
+                         "rankings":  ""
+                     },
+                     {
+                         "personId":  "f366fad9-2838-4b04-a5df-f9251c285eb6",
+                         "rankings":  ""
+                     },
+                     {
+                         "personId":  "76987f99-e0ac-452a-a14d-ed9cb60de415",
+                         "rankings":  ""
+                     },
+                     {
+                         "personId":  "8a40e601-cf40-4035-af84-56e71f0e5489",
+                         "rankings":  ""
+                     },
+                     {
+                         "personId":  "ee8c8b95-6e4a-4a6b-b7be-0dd6ac0f6bb9",
+                         "rankings":  ""
+                     },
+                     {
+                         "personId":  "6046e691-f4c4-4da9-a9af-74d43fbc6b70",
+                         "rankings":  ""
+                     }
+                 ]
+}

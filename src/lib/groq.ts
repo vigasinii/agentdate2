@@ -32,7 +32,7 @@ export interface DateConversation {
 
 async function chat(systemPrompt: string, userPrompt: string): Promise<string> {
   const res = await groq.chat.completions.create({
-    model: "openai/gpt-oss-120b",
+    model: process.env.GROQ_MODEL ?? "openai/gpt-oss-20b",
     messages: [
       { role: "system", content: systemPrompt },
       { role: "user", content: userPrompt },
@@ -116,8 +116,8 @@ Be natural, flirty when appropriate, and authentic to your character. Keep respo
     // A speaks
     const aPrompt =
       round === 0
-        ? `Start the date with a warm opener. Introduce yourself briefly and ask ${personB.name} something interesting.`
-        : `Continue the date conversation naturally based on what ${personB.name} just said: "${messages[messages.length - 1]?.content}"`;
+        ? `You are ${personA.name}. Start the date with a warm opener as yourself. Mention one of your real interests (${personA.analysis.hobbies.slice(0,2).join(" or ")}) and ask ${personB.name} something genuine about their life.`
+        : `You are ${personA.name}. Continue the date naturally, responding to what ${personB.name} just said: "${messages[messages.length - 1]?.content}"`;
 
     const aMsg = await chat(makeSystemPrompt(personA, personB), aPrompt);
     messages.push({ role: "A", content: aMsg });
@@ -125,7 +125,7 @@ Be natural, flirty when appropriate, and authentic to your character. Keep respo
     // B responds
     const bMsg = await chat(
       makeSystemPrompt(personB, personA),
-      `Respond to ${personA.name}'s message: "${aMsg}"`
+      `You are ${personB.name}. Respond authentically to ${personA.name}'s message as yourself: "${aMsg}"`
     );
     messages.push({ role: "B", content: bMsg });
   }
