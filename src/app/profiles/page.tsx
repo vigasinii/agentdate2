@@ -1,60 +1,43 @@
-﻿export const dynamic = "force-dynamic";
+export const dynamic = "force-dynamic";
 import { getPeople } from "@/lib/store";
 import Link from "next/link";
 
 export default function ProfilesPage() {
   const people = getPeople();
-
   return (
-    <div className="p-6 md:p-8 max-w-5xl">
-      <div className="mb-8">
-        <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: "var(--accent)" }}>People</p>
-        <h1 className="text-3xl font-bold mb-1" style={{ color: "var(--text)" }}>All Profiles</h1>
-        <p className="text-sm" style={{ color: "var(--muted)" }}>{people.length} people analyzed by AI agents</p>
+    <div className="max-w-5xl mx-auto px-6 py-10">
+      <div className="mb-6">
+        <h1 className="text-[30px] font-semibold mb-1" style={{ color: "var(--text)" }}>People</h1>
+        <p className="text-[14px]" style={{ color: "var(--muted)" }}>{people.length} profiles analyzed by AI agents</p>
       </div>
 
       {people.length === 0 && (
-        <div className="rounded-xl border p-12 text-center" style={{ background: "var(--surface1)", borderColor: "var(--border)" }}>
-          <p className="text-sm mb-2" style={{ color: "var(--muted)" }}>No profiles yet.</p>
-          <Link href="/" className="text-sm hover:underline" style={{ color: "var(--accent)" }}>Add people on the home page →</Link>
+        <div className="rounded-xl border p-12 text-center" style={{ borderColor: "var(--border)" }}>
+          <p className="text-[14px]" style={{ color: "var(--muted)" }}>No profiles yet. <Link href="/" className="underline" style={{ color: "var(--accent)" }}>Add someone from the dashboard.</Link></p>
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {people.map(person => (
-          <Link key={person.id} href={`/profiles/${person.id}`}>
-            <div
-              className="rounded-xl border p-5 cursor-pointer transition-all hover:border-opacity-40 group"
-              style={{ background: "var(--surface1)", borderColor: "var(--border)" }}
-            >
-              <div className="flex items-center gap-4 mb-4">
-                {person.profilePicture ? (
-                  <img src={person.profilePicture} alt={person.name} className="w-14 h-14 rounded-full object-cover" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {people.map(p => (
+          <Link key={p.id} href={"/profiles/" + p.id}>
+            <div className="rounded-xl border p-4 hover:border-[var(--accent)] transition-colors cursor-pointer h-full"
+              style={{ background: "var(--card)", borderColor: "var(--border)" }}>
+              <div className="flex items-center gap-3 mb-3">
+                {p.profilePicture ? (
+                  <img src={p.profilePicture} alt={p.name} className="w-10 h-10 rounded-full object-cover flex-shrink-0" />
                 ) : (
-                  <div
-                    className="w-14 h-14 rounded-full flex items-center justify-center text-xl font-bold"
-                    style={{ background: "rgba(201,167,255,0.12)", color: "var(--accent)" }}
-                  >
-                    {person.name[0]}
-                  </div>
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-[15px] font-medium flex-shrink-0"
+                    style={{ background: "var(--surface2)", color: "var(--muted)" }}>{p.name[0]}</div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <h2 className="text-base font-bold truncate group-hover:text-purple-300 transition-colors" style={{ color: "var(--text)" }}>{person.name}</h2>
-                  <p className="text-xs truncate" style={{ color: "var(--muted)" }}>{person.rawLinkedIn?.headline}</p>
+                  <p className="text-[14px] font-medium truncate" style={{ color: "var(--text)" }}>{p.name}</p>
+                  <p className="text-[12px] truncate" style={{ color: "var(--muted)" }}>{p.rawLinkedIn?.headline}</p>
                 </div>
-                <span className="text-xs px-2 py-1 rounded-full border shrink-0" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>View →</span>
               </div>
-
-              <p className="text-xs leading-relaxed mb-4 line-clamp-2" style={{ color: "var(--muted)" }}>{person.analysis.summary}</p>
-
-              <div className="flex flex-wrap gap-1.5 mb-2">
-                {(person.analysis.personality ?? []).map(t => (
-                  <span key={t} className="text-xs px-2 py-0.5 rounded-full" style={{ background: "rgba(201,167,255,0.1)", color: "var(--accent)" }}>{t}</span>
-                ))}
-              </div>
-              <div className="flex flex-wrap gap-1.5">
-                {(person.analysis.hobbies ?? []).slice(0, 3).map(h => (
-                  <span key={h} className="text-xs px-2 py-0.5 rounded-full" style={{ background: "rgba(242,166,184,0.1)", color: "var(--romantic)" }}>{h}</span>
+              <p className="text-[13px] leading-relaxed mb-3 line-clamp-2" style={{ color: "var(--muted)" }}>{p.analysis.summary}</p>
+              <div className="flex flex-wrap gap-1">
+                {(p.analysis.personality ?? []).slice(0, 3).map(t => (
+                  <span key={t} className="text-[11px] px-2 py-0.5 rounded-md border" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>{t}</span>
                 ))}
               </div>
             </div>

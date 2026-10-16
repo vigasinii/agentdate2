@@ -1,237 +1,233 @@
-﻿"use client";
+"use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Users, MessageSquareHeart, Trophy, Sparkles, Plus, Loader2, ExternalLink, Heart } from "lucide-react";
+import { ArrowRight, Plus, Loader2, ExternalLink, AlertCircle } from "lucide-react";
 
 interface Person {
-  id: string;
-  name: string;
-  profilePicture?: string;
-  analysis: {
-    summary: string;
-    needs: string[];
-    hobbies: string[];
-    interests: string[];
-    personality: string[];
-    lookingFor: string;
-  };
+  id: string; name: string; profilePicture?: string;
+  rawLinkedIn?: { headline?: string };
+  analysis: { summary: string; personality: string[]; hobbies: string[] };
 }
-
 interface DateRecord {
-  personA: string;
-  personB: string;
-  compatibilityScore: number;
-  compatibilityReason: string;
+  personA: string; personB: string;
+  compatibilityScore: number; compatibilityReason: string;
   messages: { role: string; content: string }[];
+  synthetic?: boolean;
 }
 
-function StatCard({ label, value, icon: Icon, accent }: { label: string; value: string | number; icon: React.ElementType; accent?: string }) {
+function Avatar({ name, src, size = 32 }: { name: string; src?: string; size?: number }) {
+  if (src) return <img src={src} alt={name} className="rounded-full object-cover flex-shrink-0" style={{ width: size, height: size }} />;
   return (
-    <div
-      className="rounded-xl p-5 border flex items-center gap-4"
-      style={{ background: "var(--surface1)", borderColor: "var(--border)" }}
-    >
-      <div
-        className="w-10 h-10 rounded-lg flex items-center justify-center"
-        style={{ background: accent ? `${accent}18` : "rgba(201,167,255,0.1)" }}
-      >
-        <Icon size={18} style={{ color: accent ?? "var(--accent)" }} />
-      </div>
-      <div>
-        <p className="text-2xl font-bold" style={{ color: "var(--text)" }}>{value}</p>
-        <p className="text-xs" style={{ color: "var(--muted)" }}>{label}</p>
-      </div>
+    <div className="rounded-full flex items-center justify-center font-medium flex-shrink-0"
+      style={{ width: size, height: size, background: "var(--surface2)", color: "var(--muted)", fontSize: size * 0.4 }}>
+      {name[0].toUpperCase()}
+    </div>
+  );
+}
+
+function Metric({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div className="p-4 rounded-xl border" style={{ background: "var(--card)", borderColor: "var(--border)" }}>
+      <p className="text-[24px] font-semibold" style={{ color: "var(--text)" }}>{value}</p>
+      <p className="text-[13px] mt-0.5" style={{ color: "var(--muted)" }}>{label}</p>
     </div>
   );
 }
 
 export default function Home() {
-  const [linkedinUrl, setLinkedinUrl] = useState("");
-  const [instagramUrl, setInstagramUrl] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState("");
   const [people, setPeople] = useState<Person[]>([]);
   const [dates, setDates] = useState<DateRecord[]>([]);
-  const [topMatches, setTopMatches] = useState<{ a: Person; b: Person; score: number }[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [linkedinUrl, setLinkedinUrl] = useState("");
+  const [instagramUrl, setInstagramUrl] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [status, setStatus] = useState<{ type: "success" | "error"; msg: string } | null>(null);
 
   useEffect(() => {
     Promise.all([
       fetch("/api/add-person").then(r => r.json()),
       fetch("/api/run-dates").then(r => r.json()),
-    ]).then(([pData, dData]) => {
-      const pArr: Person[] = Array.isArray(pData) ? pData : [];
-      setPeople(pArr);
-      const dArr: DateRecord[] = Array.isArray(dData?.dates) ? dData.dates : [];
-      setDates(dArr);
-      const sorted = [...dArr].sort((a, b) => b.compatibilityScore - a.compatibilityScore).slice(0, 3);
-      const matches = sorted.flatMap(d => {
-        const a = pArr.find(p => p.id === d.personA);
-        const b = pArr.find(p => p.id === d.personB);
-        return a && b ? [{ a, b, score: d.compatibilityScore }] : [];
-      });
-      setTopMatches(matches);
+    ]).then(([p, d]) => {
+      setPeople(Array.isArray(p) ? p : []);
+      setDates(Array.isArray(d?.dates) ? d.dates : []);
+      setLoading(false);
     });
   }, []);
 
-  async function handleAddPerson(e: React.FormEvent) {
+  async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
-    setLoading(true);
-    setStatus("Scraping profiles...");
+    setSubmitting(true);
+    setStatus(null);
     try {
       const res = await fetch("/api/add-person", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ linkedinUrl, instagramUrl }),
       });
-      const person = await res.json();
-      if (person.error) throw new Error(person.error);
-      setPeople(prev => [...prev, person]);
-      setLinkedinUrl("");
-      setInstagramUrl("");
-      setStatus(`Added ${person.name} successfully`);
-      setShowForm(false);
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      setPeople(prev => [...prev, data]);
+      setLinkedinUrl(""); setInstagramUrl(""); setShowForm(false);
+      setStatus({ type: "success", msg: data.name + " added successfully" });
     } catch (err) {
-      setStatus(`Error: ${err}`);
+      setStatus({ type: "error", msg: String(err) });
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   }
 
-  const scoreColor = (s: number) => s >= 70 ? "#4ade80" : s >= 40 ? "#facc15" : "#f87171";
+  const topDates = [...dates].sort((a, b) => b.compatibilityScore - a.compatibilityScore).slice(0, 3);
+  const avgScore = dates.length ? Math.round(dates.reduce((a, d) => a + d.compatibilityScore, 0) / dates.length) : 0;
+  const scoreColor = (s: number) => s >= 70 ? "var(--success)" : s >= 40 ? "var(--warning)" : "var(--destructive)";
 
   return (
-    <div className="p-6 md:p-8 max-w-4xl">
+    <div className="max-w-5xl mx-auto px-6 py-10">
       {/* Header */}
       <div className="mb-8">
-        <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: "var(--accent)" }}>Overview</p>
-        <h1 className="text-3xl font-bold mb-1" style={{ color: "var(--text)" }}>AgentDate Dashboard</h1>
-        <p className="text-sm" style={{ color: "var(--muted)" }}>AI agents simulate real-person conversations to find compatibility</p>
+        <h1 className="text-[32px] font-semibold leading-tight mb-2" style={{ color: "var(--text)" }}>Your agents, at work.</h1>
+        <p className="text-[15px]" style={{ color: "var(--muted)" }}>Explore profiles, follow conversations, and discover compatibility.</p>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-        <StatCard label="Profiles analyzed" value={people.length} icon={Users} />
-        <StatCard label="Agent dates run" value={dates.length} icon={MessageSquareHeart} accent="var(--romantic)" />
-        <StatCard label="Avg compatibility" value={dates.length ? Math.round(dates.reduce((a, d) => a + d.compatibilityScore, 0) / dates.length) + "%" : "—"} icon={Trophy} accent="#facc15" />
-      </div>
-
-      {/* Top Matches */}
-      {topMatches.length > 0 && (
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold uppercase tracking-widest" style={{ color: "var(--muted)" }}>Top Compatibility</h2>
-            <Link href="/rankings" className="text-xs hover:underline" style={{ color: "var(--accent)" }}>View all →</Link>
-          </div>
-          <div className="space-y-3">
-            {topMatches.map(({ a, b, score }, i) => (
-              <div key={i} className="flex items-center gap-4 rounded-xl p-4 border" style={{ background: "var(--surface1)", borderColor: "var(--border)" }}>
-                <span className="text-xs font-bold w-4" style={{ color: "var(--muted)" }}>#{i + 1}</span>
-                <div className="flex items-center gap-2 flex-1 min-w-0">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold" style={{ background: "rgba(201,167,255,0.15)", color: "var(--accent)" }}>{a.name[0]}</div>
-                  <span className="text-sm font-medium truncate" style={{ color: "var(--text)" }}>{a.name}</span>
-                </div>
-                <Heart size={14} style={{ color: "var(--romantic)", flexShrink: 0 }} />
-                <div className="flex items-center gap-2 flex-1 min-w-0">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold" style={{ background: "rgba(242,166,184,0.15)", color: "var(--romantic)" }}>{b.name[0]}</div>
-                  <span className="text-sm font-medium truncate" style={{ color: "var(--text)" }}>{b.name}</span>
-                </div>
-                <span className="text-sm font-bold ml-2" style={{ color: scoreColor(score) }}>{score}%</span>
-              </div>
-            ))}
-          </div>
+      {status && (
+        <div className="flex items-center gap-2 mb-6 p-3 rounded-lg border text-[13px]"
+          style={{ borderColor: status.type === "error" ? "#fecaca" : "#bbf7d0", background: status.type === "error" ? "#fef2f2" : "#f0fdf4", color: status.type === "error" ? "var(--destructive)" : "var(--success)" }}>
+          <AlertCircle size={14} />
+          {status.msg}
         </div>
       )}
 
-      {/* CTA + Add form */}
-      <div className="flex gap-3 mb-6 flex-wrap">
-        <Link
-          href="/dates"
-          className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all"
-          style={{ background: "var(--accent)", color: "#100D16" }}
-        >
-          <Sparkles size={16} /> Watch Agents Date
-        </Link>
-        <button
-          onClick={() => setShowForm(v => !v)}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold border transition-all"
-          style={{ borderColor: "var(--border)", color: "var(--text)", background: "var(--surface1)" }}
-        >
-          <Plus size={16} /> Add a Person
-        </button>
-      </div>
-
-      {/* Add Person Form */}
-      {showForm && (
-        <div className="rounded-xl border p-6 mb-6 animate-fade-in" style={{ background: "var(--surface1)", borderColor: "var(--border)" }}>
-          <h2 className="text-base font-semibold mb-4" style={{ color: "var(--text)" }}>Add a Person</h2>
-          <form onSubmit={handleAddPerson} className="space-y-4">
-            <div>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--muted)" }}>LinkedIn URL</label>
-              <div className="flex items-center gap-2 rounded-lg border px-3" style={{ background: "var(--surface2)", borderColor: "var(--border)" }}>
-                <ExternalLink size={14} style={{ color: "var(--muted)" }} />
-                <input
-                  type="url"
-                  value={linkedinUrl}
-                  onChange={e => setLinkedinUrl(e.target.value)}
-                  placeholder="https://linkedin.com/in/username"
-                  className="flex-1 bg-transparent py-2.5 text-sm outline-none placeholder-gray-600"
-                  style={{ color: "var(--text)" }}
-                  required
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--muted)" }}>Instagram URL (public)</label>
-              <div className="flex items-center gap-2 rounded-lg border px-3" style={{ background: "var(--surface2)", borderColor: "var(--border)" }}>
-                <ExternalLink size={14} style={{ color: "var(--muted)" }} />
-                <input
-                  type="url"
-                  value={instagramUrl}
-                  onChange={e => setInstagramUrl(e.target.value)}
-                  placeholder="https://instagram.com/username"
-                  className="flex-1 bg-transparent py-2.5 text-sm outline-none placeholder-gray-600"
-                  style={{ color: "var(--text)" }}
-                  required
-                />
-              </div>
-            </div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-2.5 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-opacity disabled:opacity-60"
-              style={{ background: "var(--accent)", color: "#100D16" }}
-            >
-              {loading ? <><Loader2 size={16} className="animate-spin" /> Analyzing...</> : "Add Person & Analyze"}
-            </button>
-            {status && <p className="text-xs mt-2" style={{ color: status.startsWith("Error") ? "#f87171" : "var(--accent)" }}>{status}</p>}
-          </form>
+      {/* Metrics */}
+      {loading ? (
+        <div className="grid grid-cols-3 gap-4 mb-8">
+          {[1,2,3].map(i => <div key={i} className="skeleton h-20 rounded-xl" />)}
+        </div>
+      ) : (
+        <div className="grid grid-cols-3 gap-4 mb-8">
+          <Metric label="Profiles analyzed" value={people.length} />
+          <Metric label="Agent dates run" value={dates.length} />
+          <Metric label="Avg compatibility" value={dates.length ? avgScore + "%" : "—"} />
         </div>
       )}
 
-      {/* People mini-grid */}
-      {people.length > 0 && (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {/* Top Compatibility */}
+        <div className="md:col-span-2">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-[15px] font-semibold" style={{ color: "var(--text)" }}>Top Compatibility</h2>
+            <Link href="/rankings" className="text-[13px] flex items-center gap-1 hover:underline" style={{ color: "var(--accent)" }}>
+              View all <ArrowRight size={13} />
+            </Link>
+          </div>
+          {loading ? (
+            <div className="space-y-2">{[1,2,3].map(i => <div key={i} className="skeleton h-14 rounded-xl" />)}</div>
+          ) : topDates.length === 0 ? (
+            <div className="rounded-xl border p-6 text-center text-[13px]" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>No dates yet</div>
+          ) : (
+            <div className="space-y-2">
+              {topDates.map((d, i) => {
+                const a = people.find(p => p.id === d.personA);
+                const b = people.find(p => p.id === d.personB);
+                return (
+                  <Link key={i} href="/dates">
+                    <div className="flex items-center gap-3 p-3 rounded-xl border hover:border-[var(--accent)] transition-colors cursor-pointer"
+                      style={{ background: "var(--card)", borderColor: "var(--border)" }}>
+                      <Avatar name={a?.name ?? "?"} src={a?.profilePicture} size={32} />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[13px] font-medium truncate" style={{ color: "var(--text)" }}>
+                          {a?.name ?? "?"} & {b?.name ?? "?"}
+                        </p>
+                        <p className="text-[12px] truncate" style={{ color: "var(--muted)" }}>{d.compatibilityReason}</p>
+                      </div>
+                      <Avatar name={b?.name ?? "?"} src={b?.profilePicture} size={32} />
+                      <span className="text-[13px] font-semibold ml-1" style={{ color: scoreColor(d.compatibilityScore) }}>{d.compatibilityScore}%</span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Recent Profiles */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold uppercase tracking-widest" style={{ color: "var(--muted)" }}>People · {people.length}</h2>
-            <Link href="/profiles" className="text-xs hover:underline" style={{ color: "var(--accent)" }}>View all →</Link>
+            <h2 className="text-[15px] font-semibold" style={{ color: "var(--text)" }}>Recent Profiles</h2>
+            <Link href="/profiles" className="text-[13px] hover:underline" style={{ color: "var(--accent)" }}>All</Link>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-            {people.slice(0, 8).map(p => (
-              <Link key={p.id} href={`/profiles/${p.id}`}>
-                <div className="rounded-xl border p-3 text-center transition-all hover:border-opacity-50 cursor-pointer" style={{ background: "var(--surface1)", borderColor: "var(--border)" }}>
-                  <div className="w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center text-sm font-bold" style={{ background: "rgba(201,167,255,0.15)", color: "var(--accent)" }}>
-                    {p.profilePicture
-                      ? <img src={p.profilePicture} alt={p.name} className="w-10 h-10 rounded-full object-cover" />
-                      : p.name[0]}
+          {loading ? (
+            <div className="space-y-2">{[1,2,3,4].map(i => <div key={i} className="skeleton h-10 rounded-xl" />)}</div>
+          ) : (
+            <div className="space-y-1">
+              {people.slice(0, 6).map(p => (
+                <Link key={p.id} href={"/profiles/" + p.id}>
+                  <div className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-[var(--surface)] transition-colors">
+                    <Avatar name={p.name} src={p.profilePicture} size={28} />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[13px] font-medium truncate" style={{ color: "var(--text)" }}>{p.name}</p>
+                      <p className="text-[11px] truncate" style={{ color: "var(--muted)" }}>{p.rawLinkedIn?.headline}</p>
+                    </div>
                   </div>
-                  <p className="text-xs font-medium truncate" style={{ color: "var(--text)" }}>{p.name}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
-      )}
+      </div>
+
+      {/* Add Person CTA */}
+      <div className="border rounded-xl p-5" style={{ background: "var(--card)", borderColor: "var(--border)" }}>
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-[15px] font-semibold" style={{ color: "var(--text)" }}>Add a person</h2>
+            <p className="text-[13px] mt-0.5" style={{ color: "var(--muted)" }}>Submit LinkedIn and Instagram URLs to create an agent profile.</p>
+          </div>
+          {!showForm && (
+            <button onClick={() => setShowForm(true)}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-[13px] font-medium transition-colors hover:opacity-90"
+              style={{ background: "var(--accent)", color: "#fff" }}>
+              <Plus size={14} /> Create agent
+            </button>
+          )}
+        </div>
+
+        {showForm && (
+          <form onSubmit={handleAdd} className="space-y-3">
+            <div>
+              <label className="block text-[12px] font-medium mb-1" style={{ color: "var(--muted)" }}>LinkedIn profile URL</label>
+              <div className="flex items-center gap-2 border rounded-lg px-3 py-2" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
+                <ExternalLink size={13} style={{ color: "var(--muted)" }} />
+                <input type="url" value={linkedinUrl} onChange={e => setLinkedinUrl(e.target.value)}
+                  placeholder="https://linkedin.com/in/username"
+                  className="flex-1 bg-transparent outline-none text-[13px] placeholder:text-[var(--muted)]"
+                  style={{ color: "var(--text)" }} required />
+              </div>
+            </div>
+            <div>
+              <label className="block text-[12px] font-medium mb-1" style={{ color: "var(--muted)" }}>Instagram profile URL</label>
+              <div className="flex items-center gap-2 border rounded-lg px-3 py-2" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
+                <ExternalLink size={13} style={{ color: "var(--muted)" }} />
+                <input type="url" value={instagramUrl} onChange={e => setInstagramUrl(e.target.value)}
+                  placeholder="https://instagram.com/username"
+                  className="flex-1 bg-transparent outline-none text-[13px] placeholder:text-[var(--muted)]"
+                  style={{ color: "var(--text)" }} required />
+              </div>
+            </div>
+            <div className="flex gap-2 pt-1">
+              <button type="submit" disabled={submitting}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-[13px] font-medium transition-opacity disabled:opacity-60"
+                style={{ background: "var(--accent)", color: "#fff" }}>
+                {submitting ? <><Loader2 size={13} className="animate-spin" /> Analyzing...</> : "Create agent"}
+              </button>
+              <button type="button" onClick={() => { setShowForm(false); setStatus(null); }}
+                className="px-4 py-2 rounded-lg text-[13px] font-medium border transition-colors"
+                style={{ borderColor: "var(--border)", color: "var(--muted)" }}>
+                Cancel
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
     </div>
   );
 }
