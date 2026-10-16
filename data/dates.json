@@ -1221,31 +1221,31 @@
     "messages": [
       {
         "role": "A",
-        "content": "Hey Greg, I love getting up on stage and sharing stories that inspire people—it's a real joy! I’m curious, what design project has made you feel like you’re truly building a community? I’d love to hear what drives your passion for community building."
+        "content": "Hey Greg, it’s great to finally meet you—there’s nothing I love more than speaking to a live crowd and feeling that instant connection. I also find so much joy in the sense of community at church. What’s the most exciting design project you’ve worked on that helped bring people together?"
       },
       {
         "role": "B",
-        "content": "Thanks, Cody—stage‑speaking is pure fire, and I can see why it’s a joy! The design project that truly feels like building a community is the open‑source system we launched for creators: it turns strangers into collaborators who iterate, share, and grow together—kind of like a digital congregation, and that’s exactly why I’m passionate about community"
+        "content": "Hey Cody—so glad to meet you too! I’m still buzzing from launching a community‑centric platform that uses AI to surface hyper‑local events and worship groups, turning strangers into a vibrant network of creators and believers. It feels like the digital version of that instant “wow” you get on stage, but for the whole crowd."
       },
       {
         "role": "A",
-        "content": "That’s exactly the kind of community you’re building—like a church of creators—so inspiring! I love how design can forge those spiritual spaces; maybe we could brainstorm a faith‑inspired design challenge together? Your enthusiasm is contagious, Greg."
+        "content": "That sounds like an incredible “wow” moment—like turning a small-town church revival into a worldwide festival! 🎤 How did you first get the spark to blend faith, tech, and community? I’d love to hear what keeps you energized every day."
       },
       {
         "role": "B",
-        "content": "Hey Cody, that’s exactly the vibe I’m chasing—building a tribe that feels like a sanctuary for creators. I’d love to co‑create a faith‑inspired design sprint; imagine a space where purpose meets pixel. Let’s turn that spark into a movement—your passion is the fuel!"
+        "content": ""
       },
       {
         "role": "A",
-        "content": "Hey Greg, I’m buzzing just hearing you’re on the same page—faith + design = a powerhouse for community. Let’s grab coffee next week and start drafting our first sprint, turning that spark into a sanctuary for creators. Your vision is already inspiring, and I can’t wait to help bring it to life."
+        "content": "I had an amazing time chatting about design and community vibes—thanks for sharing that spark, Greg. I’d love to keep building on this connection, maybe over coffee or a quick project brainstorm next week? 🌟"
       },
       {
         "role": "B",
         "content": ""
       }
     ],
-    "compatibilityScore": 75,
-    "compatibilityReason": "Both value genuine community, encouragement, and service, but differing emphases on faith versus creativity create a moderate‑to‑high compatibility."
+    "compatibilityScore": 80,
+    "compatibilityReason": "Both value community, faith, and genuine connection, but Cody is more service‑oriented while Greg leans creative and tech‑savvy, offering complementary strengths."
   },
   {
     "personA": "c8d4e041-e319-4d31-b65b-77b93406b71d",
@@ -1253,7 +1253,7 @@
     "messages": [
       {
         "role": "A",
-        "content": "Hey David—so glad we’re finally meeting! I love speaking at church; it’s the perfect chance to serve and spark hope in people’s hearts. What’s the one book that’s most shaped your writing lately?"
+        "content": "Hey David, I’m really excited to meet you—speaking at church is one of the things that lights me up every week. I’d love to hear, what book has captured your imagination lately?"
       },
       {
         "role": "B",
@@ -1261,23 +1261,23 @@
       },
       {
         "role": "A",
-        "content": "Your latest story had me on the edge of my seat—writing truly is a ministry of the heart, wouldn't you agree? I’d love to hear more over coffee and see how we can weave faith and storytelling into a powerful community narrative. And hey, maybe you could write a chapter about how a guy named Cody asks for coffee? 😉"
+        "content": "David, your passion for writing always feels like a fresh chapter in my day—care to share what’s got you inspired lately? I’ve been exploring how narrative can boost community and faith, and I’d love to hear how you weave"
       },
       {
         "role": "B",
-        "content": "Absolutely—there’s nothing like a good narrative to stir the soul, and I’m thrilled you felt that. Coffee sounds perfect; I’d love to swap stories about faith, storytelling, and the art of persuasion—maybe I can draft a chapter titled “Cody’s Coffee Quest” as a playful tribute to our shared love of speaking. Let’s set a date and keep the conversation flowing like a well‑crafted plot."
+        "content": "Thanks for the kind words—right now I’m riffing on the idea of “story as a social engine,” marrying Aristotle’s ethos with the viral immediacy of livestream. I’d love to hear how your faith community turns spoken word into communal identity—maybe we could co‑create a podcast episode that sparks both conversation and connection?"
       },
       {
         "role": "A",
-        "content": ""
+        "content": "Thanks for the kind words—right now I’m riffing on the idea of “story as a social engine,” marrying Aristotle’s ethos with the viral immediacy of livestream. I’d love to hear how your faith community turns spoken word into communal identity—maybe we could co‑create a podcast episode that sparks both conversation and connection? Let's set up a quick call or grab coffee to"
       },
       {
         "role": "B",
-        "content": "It’s been such a delight chatting with you—your energy is contagious. I’m already looking forward to our next conversation—maybe over coffee or a walk in the park? Until then, keep those ideas flowing and take care."
+        "content": ""
       }
     ],
     "compatibilityScore": 70,
-    "compatibilityReason": "Both are warm, supportive, and value growth, but the lack of explicit shared faith and service orientation in David may moderate their compatibility."
+    "compatibilityReason": "They share warmth, genuine interest, and a supportive vibe, but differ on core values—Cody’s faith-driven service orientation versus David’s focus on intellectual depth and learning."
   },
   {
     "personA": "c8d4e041-e319-4d31-b65b-77b93406b71d",
@@ -1310,5 +1310,325 @@
     ],
     "compatibilityScore": 75,
     "compatibilityReason": "They share energetic enthusiasm and authenticity but differ on faith-driven values and depth of spiritual commitment."
+  },
+  {
+    "personA": "c8d4e041-e319-4d31-b65b-77b93406b71d",
+    "personB": "472f05d7-38e4-4b67-9cba-a6b73c41c71c",
+    "messages": [
+      {
+        "role": "A",
+        "content": "Hey Rohan, it’s awesome to finally meet you—speaking on stage and sharing stories that uplift people is one of the things I love most. I’m curious, what’s one business project you’re most excited about right now?"
+      },
+      {
+        "role": "B",
+        "content": "Hey Cody, great to meet you too—your stage presence is seriously inspiring! Right now I’m hustling on a wellness‑tech startup that uses AI to pair personalized fitness plans with a community vibe—think a digital “church” for health. I’d love to hear your take on how we could turn that into a movement together."
+      },
+      {
+        "role": "A",
+        "content": ""
+      },
+      {
+        "role": "B",
+        "content": "Hey Cody, love that you’re passionate about speaking and church—there’s something truly inspiring about blending faith with purpose. I’d love to hear more about your journey and maybe brainstorm how we could merge storytelling with impact together. If you’re up for it, let’s grab coffee at that spot with live music next week!"
+      },
+      {
+        "role": "A",
+        "content": "Hey Rohan, I’m genuinely thrilled about the idea of weaving faith‑driven storytelling into a purpose‑built venture—your entrepreneurial vibe is exactly the spark I’m looking for. Let’s dive deeper over coffee and live music next week"
+      },
+      {
+        "role": "B",
+        "content": "Hey Rohan, I’m genuinely thrilled about the idea of weaving faith‑driven storytelling into a purpose‑built venture—your entrepreneurial vibe is exactly the spark I’m looking for. Let’s dive deeper over coffee and live music next week."
+      }
+    ],
+    "compatibilityScore": 85,
+    "compatibilityReason": "Both are energetic, community-oriented, and value growth and service, with overlapping faith and ambition—making them a strong match."
+  },
+  {
+    "personA": "c8d4e041-e319-4d31-b65b-77b93406b71d",
+    "personB": "f366fad9-2838-4b04-a5df-f9251c285eb6",
+    "messages": [
+      {
+        "role": "A",
+        "content": "Hey Shaan, great to meet you! I love stepping up to speak in front of people—there’s nothing like a good sermon to spark a conversation. What’s the one podcast episode that really shifted your perspective?"
+      },
+      {
+        "role": "B",
+        "content": "Hey Cody—glad to meet a fellow sermon‑savant! The podcast that totally flipped my brain was Tim Ferriss’s “The Rise of the Post‑Scarcity Economy” – it made me realize scarcity is a mindset, not a law of physics, and it lit a fire in my startup playbook. What’s the one sermon or talk that’s been your game‑changer?"
+      },
+      {
+        "role": "A",
+        "content": "That’s a killer episode—Ferriss is a genius for flipping paradigms! I’d say my game‑changer was a Sunday service on “The Freedom of Unconditional Love” that really cracked open the door to selling from heart, not just numbers. It’s that same faith‑fuel that keeps me coaching entrepreneurs to build communities that thrive, not just survive."
+      },
+      {
+        "role": "B",
+        "content": "That’s exactly the kind of heart‑first hustle that turns a side hustle into a movement—love how you’re marrying faith with the grind.  I’d say the next step is to turn that Sunday service into a community platform—let’s brainstorm a podcast or live series that amplifies that message.  Keep crushing it, Cody—your vibe is the new engine for building thriving ecosystems."
+      },
+      {
+        "role": "A",
+        "content": ""
+      },
+      {
+        "role": "B",
+        "content": "Hey Cody, I had a blast chatting about everything from pop culture to startup vibes—just like a good sermon, but with more memes.  Can't wait to keep the conversation rolling over coffee (or a coffee with a side of gospel).  Keep shining and stay generous with your amazing energy!"
+      }
+    ],
+    "compatibilityScore": 75,
+    "compatibilityReason": ""
+  },
+  {
+    "personA": "c8d4e041-e319-4d31-b65b-77b93406b71d",
+    "personB": "76987f99-e0ac-452a-a14d-ed9cb60de415",
+    "messages": [
+      {
+        "role": "A",
+        "content": "Hey Samir—one of the things I genuinely love is speaking in front of a crowd; there’s nothing like the buzz of connecting with people right away. How does your love for design and photography let you tell your own story?"
+      },
+      {
+        "role": "B",
+        "content": "That’s such a powerful vibe—there’s something almost sacred about the instant connection you feel. For me, every frame I compose and every brand I craft is like a visual sermon, turning everyday moments into a narrative that speaks louder than words. If you’re up for it, I’d love to hear one of your speeches and see how we can blend our passions into something truly electric."
+      },
+      {
+        "role": "A",
+        "content": "That’s exactly the spark I love—when a story feels alive, it moves people. I’d love to hear you speak and see how your lens can amplify the message I’m building, turning every frame into a powerful sermon. Let’s blend our visions and light up the room together—one photo, one word at a time."
+      },
+      {
+        "role": "B",
+        "content": "That’s exactly the spark I thrive on—turning raw emotion into visual poetry. I’m already picturing how my lens can amplify your message, turning each frame into a living sermon that lights up the room. Let’s fuse our visions and make every shot and word a radiant testimony."
+      },
+      {
+        "role": "A",
+        "content": "That’s exactly the spark I thrive on—turning raw emotion into visual poetry. I’m already picturing how my lens can amplify your message, turning each frame into a living sermon that lights up the room. Let’s fuse our visions and make every shot and word a radiant testimony."
+      },
+      {
+        "role": "B",
+        "content": "That’s exactly the spark I thrive on—turning raw emotion into visual poetry. I’m already picturing how my lens can amplify your message, turning each frame into a living sermon that lights up the room. Let’s fuse our visions and make every shot and word a radiant testimony."
+      }
+    ],
+    "compatibilityScore": 70,
+    "compatibilityReason": "They share passion, authenticity and a desire to inspire, but differ on core values: Cody prioritizes faith and service, while Samir focuses on creative expression and aesthetic appreciation."
+  },
+  {
+    "personA": "c8d4e041-e319-4d31-b65b-77b93406b71d",
+    "personB": "8a40e601-cf40-4035-af84-56e71f0e5489",
+    "messages": [
+      {
+        "role": "A",
+        "content": "Hey Sahil, it’s so great to finally meet you—speaking in front of a crowd is one of the things that truly lifts my spirit. I’m curious, what’s your favorite baseball memory that still makes your heart race? And how do you find the flow when you’re deep into a writing session?"
+      },
+      {
+        "role": "B",
+        "content": "Hey Cody, it’s awesome to meet you—your energy when you speak is contagious. The baseball moment that still makes my heart race? Watching Derek Jeter hit that game‑winning homer in ’00, the silence, then the roar—pure adrenaline. When I’m deep in a writing session, I lean on the “flow = frictionless focus” mental model: block distractions, let ideas spill, and then take a quick walk or coffee break to reset the rhythm."
+      },
+      {
+        "role": "A",
+        "content": "Hey Sahil, that Jeter moment is pure adrenaline—exactly the kind of game‑changing play that keeps us on our toes. Your flow hack is spot on; I’ll try it next time I’m pitching a deck—think of it as a home run for ideas. How about we keep the momentum going with a quick coffee break or a short run?"
+      },
+      {
+        "role": "B",
+        "content": "Sounds like a winning play, Cody—nothing beats that instant of pure adrenaline. Coffee would be perfect; we could swap mental‑model hacks and maybe touch on how pitching ideas parallels church sermons—both need a clear message and a compelling delivery. If you’re up for it, I’d love to hit a quick run afterward and keep that momentum alive."
+      },
+      {
+        "role": "A",
+        "content": "That was a game‑changing convo, Sahil—your love for baseball and writing really hit all the right notes. Coffee sounds perfect to keep the momentum; we can swap mental‑model hacks and even compare pitching ideas to church sermons—both need a clear message and compelling delivery. Afterward, a quick run would be the ideal way to close the evening and keep that adrenaline alive."
+      },
+      {
+        "role": "B",
+        "content": ""
+      }
+    ],
+    "compatibilityScore": 50,
+    "compatibilityReason": ""
+  },
+  {
+    "personA": "c8d4e041-e319-4d31-b65b-77b93406b71d",
+    "personB": "ee8c8b95-6e4a-4a6b-b7be-0dd6ac0f6bb9",
+    "messages": [
+      {
+        "role": "A",
+        "content": "Hey Dickie, great to meet you! I absolutely love stepping up on stage and sharing a message in front of a live crowd—there’s nothing like that buzz to get my heart racing. What’s your favorite way to get into the creative flow before you write?"
+      },
+      {
+        "role": "B",
+        "content": "Hey Cody, great to meet you! I get into the creative flow by starting with a disciplined routine—coffee, a quick walk, then a 10‑minute free‑write before I sit down to craft. Maybe after your next talk we can swap stories over coffee—just a thought."
+      },
+      {
+        "role": "A",
+        "content": "Hey Dickie! Love that coffee‑walk‑free‑write routine—keeps the creativity sharp. I’d love to swap stories and maybe share how faith fuels my sales mindset and community‑building hustle. Coffee after the talk sounds like the perfect kickoff to a great convo."
+      },
+      {
+        "role": "B",
+        "content": "Love the idea—coffee fuels the brain, conversation fuels the soul. I’m all ears for how faith shapes your sales grind and community vibes; let’s swap stories over a latte and maybe a quick walk to keep the creativity flowing. Looking forward to a great kickoff, Cody!"
+      },
+      {
+        "role": "A",
+        "content": "Love the"
+      },
+      {
+        "role": "B",
+        "content": ""
+      }
+    ],
+    "compatibilityScore": 75,
+    "compatibilityReason": "They share a growth mindset, encouragement and a desire for support, but differ on shared faith and religious values."
+  },
+  {
+    "personA": "c8d4e041-e319-4d31-b65b-77b93406b71d",
+    "personB": "6046e691-f4c4-4da9-a9af-74d43fbc6b70",
+    "messages": [
+      {
+        "role": "A",
+        "content": "Hey Polina, I’m really passionate about speaking—sharing stories and connecting with people. What book has most inspired or challenged you lately?"
+      },
+      {
+        "role": "B",
+        "content": "Hey Cody, I’m all about the blend of psychology and storytelling—your passion really hits home. Lately I’ve been wrestling with *The Storyteller’s Secret* by Carmine Gallo; it pushes me to think about how narrative shapes perception and the"
+      },
+      {
+        "role": "A",
+        "content": "That’s awesome, Polina—narrative is the secret sauce to any great pitch or sermon. I’d love"
+      },
+      {
+        "role": "B",
+        "content": "I’d love to hear how you weave personal faith into public speaking, and maybe we could co‑host a story that bridges our passions. After all, great narratives thrive on that cross‑disciplinary spark—just like our conversation right now."
+      },
+      {
+        "role": "A",
+        "content": "I’d love to hear how you weave personal faith into public speaking, and maybe we could co‑host a story that"
+      },
+      {
+        "role": "B",
+        "content": "I’d love to hear how you weave personal faith into public speaking, and"
+      }
+    ],
+    "compatibilityScore": 70,
+    "compatibilityReason": "They share a genuine, curious approach to storytelling and deep conversations, but differ on core values—Cody’s faith-driven focus vs Polina’s emphasis on intellectual curiosity and emotional depth—potentially limiting long-term alignment."
+  },
+  {
+    "personA": "23922ea2-6204-49c6-aecd-11b82ebdd1b7",
+    "personB": "1a92c012-c898-41ca-8325-bf94b741342d",
+    "messages": [
+      {
+        "role": "A",
+        "content": "Hey, I’m James—one of the first people who ever carried a notebook on every trip, always jotting down the little stories that travel uncovers. I’m curious, Gary, what’s the one place you’ve visited that reshaped how you see the hustle? And if you could share one win from your wine cellar, I’d love to hear it."
+      },
+      {
+        "role": "B",
+        "content": ""
+      },
+      {
+        "role": "A",
+        "content": ""
+      },
+      {
+        "role": "B",
+        "content": "James, I’m crushing it with content, but your habit hacks are fire—let’s fuse that with a viral campaign.  \nWe’re both in the grind, so let’s out‑play the competition and make something legendary.  \nAnd hey, if we’re talking travel, we’ve got the perfect itinerary for a jet‑set hustle trip."
+      },
+      {
+        "role": "A",
+        "content": "That’s exactly the kind of synergy I love—habits fueling a viral launch and a trip that feels like a reward. Let’s pencil in a call next week to sketch the roadmap, then I’ll pick a few boutique wines for our post‑campaign celebration. Looking forward to turning those ideas into something legendary."
+      },
+      {
+        "role": "B",
+        "content": "That’s exactly the kind of synergy I love—habits fueling a viral launch and a trip that feels like a reward. Let’s pencil in a call next week to sketch the roadmap, then I’ll pick a few boutique wines for our post‑campaign celebration. Looking forward to turning those ideas into something legendary."
+      }
+    ],
+    "compatibilityScore": 70,
+    "compatibilityReason": "They share curiosity, intellectual drive, and authenticity, but James’ patient, consistent pace clashes with Gary’s high‑energy, competitive intensity, limiting romantic alignment."
+  },
+  {
+    "personA": "23922ea2-6204-49c6-aecd-11b82ebdd1b7",
+    "personB": "0dd3a5a5-d0cf-489f-9c8a-72ee984afffd",
+    "messages": [
+      {
+        "role": "A",
+        "content": "I love traveling to quiet corners of the world where I can sit with a notebook and let the surroundings spark my writing. It’s amazing how a new city can become a fresh chapter in my mind. What’s the last book that made you pause, reflect, and maybe even change the way you see things?"
+      },
+      {
+        "role": "B",
+        "content": ""
+      },
+      {
+        "role": "A",
+        "content": "That’s a great book—any chance it’s got a chapter on the psychology of the game? I’d love to hear your take on how the fundamentals of basketball mirror the habits we build in life. Maybe we can grab a coffee and debate whether a good shot is more about skill or mindset?"
+      },
+      {
+        "role": "B",
+        "content": "Absolutely—every play in basketball is a micro‑habit, and the same feedback loops that sharpen a shot also shape our daily routines. Let’s grab coffee and debate whether a great shot is a skill perfected by muscle memory or a mindset tuned for resilience. I’ll bring the espresso, you bring the insight—ready for a win‑win conversation?"
+      },
+      {
+        "role": "A",
+        "content": ""
+      },
+      {
+        "role": "B",
+        "content": "Thank you for sharing your insights and for the delightful conversation. I look forward to our next chat and wish you a wonderful day ahead."
+      }
+    ],
+    "compatibilityScore": 85,
+    "compatibilityReason": "Both value intellectual engagement, growth, and emotional depth. Their personalities (curious, patient vs compassionate, principled) complement each other, and their shared interests in books, travel, and thoughtful conversation suggest strong alignment."
+  },
+  {
+    "personA": "23922ea2-6204-49c6-aecd-11b82ebdd1b7",
+    "personB": "2a59a128-013a-4ce7-ab44-f6de0e5d66fe",
+    "messages": [
+      {
+        "role": "A",
+        "content": "Hi Reid, I love traveling to quiet corners of the world where I can sit down and write; the silence there feels like a fresh canvas. I’m curious—what’s a board game or book that’s completely reshaped how you think about the world?"
+      },
+      {
+        "role": "B",
+        "content": ""
+      },
+      {
+        "role": "A",
+        "content": "I’ve always found that the best learning happens through play, so how about we test our decision‑making skills over a quick game of Settlers of Catan—think of it as a live experiment in behavioral economics? Your love of philosophy makes me curious: after the dice roll, I’d love to hear your take on Kant’s “"
+      },
+      {
+        "role": "B",
+        "content": "Sounds like a brilliant experiment—Catan is a microcosm of network effects and resource scarcity, exactly the kind of live lab I love. I’m up for a roll of the dice and a post‑game Kantian debrief, especially if you can weave in a travel anecdote that ties the imperative to your writing. Let’s see who ends up with the most strategic empire and the most compelling narrative."
+      },
+      {
+        "role": "A",
+        "content": "Sounds like a brilliant experiment—Catan is a microcosm of network effects and resource scarcity, exactly the kind of live lab I love. I'm up for a roll of the dice and a post‑game Kantian debrief, especially if you can weave in a travel anecdote that ties the imperative to your writing. Let’s see who ends up with the most strategic empire and the most compelling narrative."
+      },
+      {
+        "role": "B",
+        "content": ""
+      }
+    ],
+    "compatibilityScore": 50,
+    "compatibilityReason": ""
+  },
+  {
+    "personA": "23922ea2-6204-49c6-aecd-11b82ebdd1b7",
+    "personB": "0b48d45d-d030-4fe9-bbb7-dacbc0fddf61",
+    "messages": [
+      {
+        "role": "A",
+        "content": "Hey Arianna, I love traveling to quiet corners of the world that spark fresh ideas for my writing. Your work on sleep advocacy is inspiring—what’s the most surprising thing you’ve learned about the science of rest?"
+      },
+      {
+        "role": "B",
+        "content": "Thank you! The most surprising thing I’ve learned is that REM sleep literally rewrites the brain’s architecture—like a nightly editor polishing the next chapter of our lives. I’d love to hear which quiet corner of the world sparks your next book; perhaps over a cup of tea we can brainstorm the next great idea."
+      },
+      {
+        "role": "A",
+        "content": "Your point about REM rewiring is spot on—sleep is the brain’s own editing suite."
+      },
+      {
+        "role": "B",
+        "content": "Absolutely—REM is the brain’s own editing suite, turning raw experiences into polished insights. I love how you frame it as a habit‑building tool; it’s like turning every night into a fresh chapter of a well‑written journey. Maybe we should grab coffee soon and brainstorm how to turn that nightly reset into a leadership super‑power?"
+      },
+      {
+        "role": "A",
+        "content": ""
+      },
+      {
+        "role": "B",
+        "content": "With gratitude for this conversation and excitement for the journey ahead."
+      }
+    ],
+    "compatibilityScore": 80,
+    "compatibilityReason": "They both share intellectual curiosity, a growth mindset, and a commitment to well-being, which fosters strong mutual respect and collaboration. However, James prioritizes incremental consistency and precise improvement, whereas Arianna leans toward holistic wisdom and emotional depth; this complementary yet distinct focus may require balancing to maintain harmony."
   }
 ]

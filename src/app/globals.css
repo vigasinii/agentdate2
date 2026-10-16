@@ -1,8 +1,17 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #100D16;
+  --surface1: #1B1623;
+  --surface2: #251D30;
+  --accent: #C9A7FF;
+  --romantic: #F2A6B8;
+  --text: #F8F4F7;
+  --muted: #A9A1B4;
+  --border: rgba(201, 167, 255, 0.12);
+  --border-solid: #2A2238;
+  --background: #100D16;
+  --foreground: #F8F4F7;
 }
 
 @theme inline {
@@ -12,15 +21,34 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-geist-sans), Arial, sans-serif;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--surface1); }
+::-webkit-scrollbar-thumb { background: var(--border-solid); border-radius: 3px; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(201, 167, 255, 0); }
+  50% { box-shadow: 0 0 20px 4px rgba(201, 167, 255, 0.15); }
+}
+
+.animate-fade-in { animation: fadeIn 0.3s ease forwards; }
+.animate-slide-in { animation: slideIn 0.3s ease forwards; }
+.animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+
+.msg-reveal {
+  opacity: 0;
+  animation: fadeIn 0.4s ease forwards;
 }
