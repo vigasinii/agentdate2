@@ -1,7 +1,3 @@
-import { ApifyClient } from "apify-client";
-
-const client = new ApifyClient({ token: process.env.APIFY_API_TOKEN });
-
 export interface LinkedInProfile {
   name: string;
   headline: string;
@@ -10,7 +6,7 @@ export interface LinkedInProfile {
   education: Array<{ school: string; degree: string; field: string }>;
   skills: string[];
   location: string;
-  profilePicture?: string;
+  profilePicture: string;
 }
 
 export interface InstagramProfile {
@@ -20,68 +16,126 @@ export interface InstagramProfile {
   followersCount: number;
   followingCount: number;
   postsCount: number;
-  profilePicUrl?: string;
+  profilePicUrl: string;
   posts: Array<{ caption: string; likesCount: number; commentsCount: number }>;
 }
 
-export async function scrapeLinkedIn(url: string): Promise<LinkedInProfile> {
-  const run = await client.actor("2SyF0bVxmgGr8IVCZ").call({ profileUrls: [url] });
-  const { items } = await client.dataset(run.defaultDatasetId).listItems();
-  const raw = items[0] as Record<string, unknown>;
+async function fetchWithTimeout(url: string, timeoutMs = 8000): Promise<Response> {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, {
+      signal: controller.signal,
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.5",
+      },
+    });
+  } finally {
+    clearTimeout(id);
+  }
+}
 
-  const experience = ((raw.positions as Record<string, unknown>[] | undefined) ?? []).map(
-    (p: Record<string, unknown>) => ({
-      title: String(p.title ?? ""),
-      company: String((p.companyName ?? p.company) ?? ""),
-      description: String(p.description ?? ""),
-    })
-  );
-
-  const education = ((raw.educations as Record<string, unknown>[] | undefined) ?? []).map(
-    (e: Record<string, unknown>) => ({
-      school: String((e.schoolName ?? e.school) ?? ""),
-      degree: String(e.degreeName ?? ""),
-      field: String((e.fieldOfStudy ?? e.field) ?? ""),
-    })
-  );
-
-  return {
-    name: String(raw.fullName ?? raw.name ?? ""),
-    headline: String(raw.headline ?? ""),
-    summary: String(raw.summary ?? ""),
-    experience,
-    education,
-    skills: ((raw.skills as string[] | undefined) ?? []).map(String),
-    location: String(raw.location ?? ""),
-    profilePicture: String(raw.profilePicture ?? raw.photoUrl ?? ""),
-  };
+function extractMeta(html: string, property: string): string {
+  const patterns = [
+    new RegExp(`<meta[^>]+property=["']${property}["'][^>]+content=["']([^"']+)["']`, "i"),
+    new RegExp(`<meta[^>]+content=["']([^"']+)["'][^>]+property=["']${property}["']`, "i"),
+    new RegExp(`<meta[^>]+name=["']${property}["'][^>]+content=["']([^"']+)["']`, "i"),
+  ];
+  for (const re of patterns) {
+    const m = html.match(re);
+    if (m?.[1]) return m[1].trim();
+  }
+  return "";
 }
 
 export async function scrapeInstagram(url: string): Promise<InstagramProfile> {
   const username = url.replace(/\/$/, "").split("/").pop() ?? "";
-  const run = await client.actor("shu8hvrXbJbY3Eb9W").call({
-    usernames: [username],
-    resultsLimit: 12,
-  });
-  const { items } = await client.dataset(run.defaultDatasetId).listItems();
-  const raw = items[0] as Record<string, unknown>;
 
-  const posts = ((raw.latestPosts as Record<string, unknown>[] | undefined) ?? []).slice(0, 12).map(
-    (p: Record<string, unknown>) => ({
-      caption: String(p.caption ?? "").slice(0, 300),
-      likesCount: Number(p.likesCount ?? 0),
-      commentsCount: Number(p.commentsCount ?? 0),
-    })
-  );
+  try {
+    const res = await fetchWithTimeout(`https://www.instagram.com/${username}/`);
+    const html = await res.text();
 
-  return {
-    username: String(raw.username ?? username),
-    fullName: String(raw.fullName ?? ""),
-    biography: String(raw.biography ?? raw.bio ?? ""),
-    followersCount: Number(raw.followersCount ?? 0),
-    followingCount: Number(raw.followingCount ?? 0),
-    postsCount: Number(raw.postsCount ?? 0),
-    profilePicUrl: String(raw.profilePicUrl ?? raw.profilePicUrlHD ?? ""),
-    posts,
-  };
+    // Extract from Open Graph / meta tags
+    const fullName = extractMeta(html, "og:title").replace(/\s*\(@[^)]+\)\s*/, "").replace(/\s*•.*$/, "").trim();
+    const description = extractMeta(html, "og:description");
+
+    // Parse description: "X Followers, Y Following, Z Posts - See Instagram photos..."
+    const followersMatch = description.match(/([\d,.]+[KkMm]?)\s+Followers/i);
+    const followingMatch = description.match(/([\d,.]+[KkMm]?)\s+Following/i);
+    const postsMatch = description.match(/([\d,.]+[KkMm]?)\s+Posts/i);
+    const bioMatch = description.match(/- ([^-].+)$/);
+
+    function parseNum(s?: string): number {
+      if (!s) return 0;
+      const n = s.replace(/,/g, "");
+      if (n.endsWith("M") || n.endsWith("m")) return parseFloat(n) * 1_000_000;
+      if (n.endsWith("K") || n.endsWith("k")) return parseFloat(n) * 1_000;
+      return parseInt(n) || 0;
+    }
+
+    return {
+      username,
+      fullName: fullName || username,
+      biography: bioMatch?.[1]?.trim() ?? description.slice(0, 200),
+      followersCount: parseNum(followersMatch?.[1]),
+      followingCount: parseNum(followingMatch?.[1]),
+      postsCount: parseNum(postsMatch?.[1]),
+      profilePicUrl: extractMeta(html, "og:image"),
+      posts: [],
+    };
+  } catch {
+    // Minimal fallback with username only
+    return {
+      username,
+      fullName: username,
+      biography: "",
+      followersCount: 0,
+      followingCount: 0,
+      postsCount: 0,
+      profilePicUrl: "",
+      posts: [],
+    };
+  }
+}
+
+export async function scrapeLinkedIn(url: string): Promise<LinkedInProfile> {
+  try {
+    const res = await fetchWithTimeout(url);
+    const html = await res.text();
+
+    const title = extractMeta(html, "og:title") || extractMeta(html, "title");
+    const description = extractMeta(html, "og:description") || extractMeta(html, "description");
+
+    // LinkedIn og:title is usually "Name - Title at Company | LinkedIn"
+    const namePart = title.replace(/\s*\|.*$/, "").replace(/\s*-\s*LinkedIn$/, "").trim();
+    const nameMatch = namePart.match(/^([^-|]+?)(?:\s+-\s+(.+))?$/);
+    const name = nameMatch?.[1]?.trim() ?? namePart;
+    const headline = nameMatch?.[2]?.trim() ?? description.slice(0, 120);
+
+    return {
+      name,
+      headline,
+      summary: description.slice(0, 500),
+      experience: [],
+      education: [],
+      skills: [],
+      location: "",
+      profilePicture: extractMeta(html, "og:image"),
+    };
+  } catch {
+    const slug = url.replace(/\/$/, "").split("/").pop() ?? "";
+    const name = slug.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+    return {
+      name,
+      headline: "",
+      summary: "",
+      experience: [],
+      education: [],
+      skills: [],
+      location: "",
+      profilePicture: "",
+    };
+  }
 }

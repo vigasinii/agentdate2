@@ -52,18 +52,22 @@ export async function analyzeProfile(
   instagram: InstagramProfile
 ): Promise<PersonProfile["analysis"]> {
   const context = `
-LinkedIn:
+LinkedIn URL: ${linkedin.name ? `Profile of ${linkedin.name}` : "unknown"}
 Name: ${linkedin.name}
 Headline: ${linkedin.headline}
 Summary: ${linkedin.summary}
-Experience: ${linkedin.experience.map((e) => `${e.title} at ${e.company}`).join(", ")}
-Skills: ${linkedin.skills.join(", ")}
-Education: ${linkedin.education.map((e) => `${e.degree} from ${e.school}`).join(", ")}
+Experience: ${linkedin.experience.map((e) => `${e.title} at ${e.company}`).join(", ") || "not available"}
+Skills: ${linkedin.skills.join(", ") || "not available"}
+Education: ${linkedin.education.map((e) => `${e.degree} from ${e.school}`).join(", ") || "not available"}
 
 Instagram:
-Bio: ${instagram.biography}
-Followers: ${instagram.followersCount}
-Recent posts captions: ${instagram.posts.map((p) => p.caption).filter(Boolean).join(" | ")}
+Username: @${instagram.username}
+Full name: ${instagram.fullName}
+Bio: ${instagram.biography || "not available"}
+Followers: ${instagram.followersCount || "unknown"}
+Recent posts: ${instagram.posts.map((p) => p.caption).filter(Boolean).join(" | ") || "not available"}
+
+Use all available signals — name, headline, bio, username — to infer their personality, interests and relationship needs. Make educated inferences even with limited data.
 `;
 
   const raw = await chat(
