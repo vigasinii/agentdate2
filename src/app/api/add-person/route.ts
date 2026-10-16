@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { scrapeLinkedIn, scrapeInstagram } from "@/lib/apify";
 import { analyzeProfile } from "@/lib/groq";

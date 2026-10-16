@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { runDate, computeRankings } from "@/lib/groq";
 import { getPeople, getDates, addDate } from "@/lib/store";
